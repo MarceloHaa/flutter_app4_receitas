@@ -29,15 +29,12 @@ class CustomTheme {
         centerTitle: true,
         toolbarHeight: 100,
         backgroundColor: colorScheme.primary,
-        titleTextStyle: GoogleFonts.lobster(
+        titleTextStyle: GoogleFonts.delius(
           fontSize: 36,
           fontWeight: FontWeight.bold,
           color: colorScheme.onPrimary,
         ),
-        iconTheme: IconThemeData(
-          color: colorScheme.onPrimary,
-          size: 36,
-        ),
+        iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 36),
       ),
       cardTheme: CardThemeData(
         color: colorScheme.secondaryContainer,
@@ -55,15 +52,12 @@ class CustomTheme {
         centerTitle: true,
         toolbarHeight: 100,
         backgroundColor: colorSchemeDark.onPrimary,
-        titleTextStyle: GoogleFonts.lobster(
+        titleTextStyle: GoogleFonts.delius(
           fontSize: 36,
           fontWeight: FontWeight.bold,
           color: colorSchemeDark.primary,
         ),
-        iconTheme: IconThemeData(
-          color: colorScheme.onPrimary,
-          size: 36,
-        ),
+        iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 36),
       ),
       cardTheme: CardThemeData(
         color: colorSchemeDark.secondaryContainer,

@@ -1,5 +1,5 @@
 class Recipe {
-  final int id;
+  final String id;
   final String name;
   final List<String> ingredients;
   final List<String> instructions;
@@ -10,7 +10,7 @@ class Recipe {
   final String? cuisine;
   final int? caloriesPerServing;
   final List<String>? tags;
-  final int userId;
+  final String userId;
   final String? image;
   final double? rating;
   final int? reviewCount;
@@ -42,7 +42,7 @@ class Recipe {
   // de lista sejam tratados corretamente.
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
-      id: json['id'] as int,
+      id: json['id'] as String,
       name: json['name'] as String,
       ingredients: _parseJsonList(json['ingredients']),
       instructions: _parseJsonList(json['instructions']),
@@ -53,7 +53,7 @@ class Recipe {
       cuisine: json['cuisine'] as String?,
       caloriesPerServing: json['calories_per_serving'] as int?,
       tags: _parseJsonListOptional(json['tags']),
-      userId: json['user_id'] as int,
+      userId: json['user_id'] as String,
       image: json['image'] as String?,
       rating: json['rating'] != null
           ? (json['rating'] as num).toDouble()

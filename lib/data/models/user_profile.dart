@@ -28,7 +28,7 @@ class UserProfile {
       id: userData['id'] ?? '',
       email: userData['email'] ?? '',
       username: profileData['username'] ?? '',
-      avatarUrl: profileData['avatarUrl'] ?? '',
+      avatarUrl: profileData['avatar_url'] ?? '',
     );
   }
 

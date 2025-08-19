@@ -84,6 +84,7 @@ class AuthViewModel extends GetxController {
     } else {
       await register();
     }
+    _isSubmitting.value= false;
   }
 
   Future<void> login() async {

@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 class AuthRepository extends GetxController {
   final _service = getIt<AuthService>();
 
-  // Retorna um UserProfile
   Future<Either<AppError, UserProfile>> get currentUser async {
     final user = _service.currentUser;
     if (user == null) {
@@ -70,6 +69,7 @@ class AuthRepository extends GetxController {
   }
 
   Future<Either<AppError, void>> signOut() async {
-    return await _service.signOut();
+    final result = await _service.signOut();
+    return result.fold((left) => Left(left), (right) => const Right(null));
   }
 }

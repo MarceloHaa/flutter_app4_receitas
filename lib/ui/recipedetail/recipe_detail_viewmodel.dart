@@ -1,17 +1,18 @@
 import 'package:app4_receitas/data/models/recipe.dart';
+import 'package:app4_receitas/data/repositories/auth_repository.dart';
 import 'package:app4_receitas/data/repositories/recipe_repository.dart';
 import 'package:app4_receitas/di/service_locator.dart';
-import 'package:app4_receitas/ui/favorites/fav_recipes_viewmodel.dart';
+import 'package:either_dart/either.dart';
 import 'package:get/get.dart';
 
 class RecipeDetailViewmodel extends GetxController {
   final _repository = getIt<RecipeRepository>();
+  final _authRepository = getIt<AuthRepository>();
 
   final Rxn<Recipe> _recipe = Rxn<Recipe>();
   final RxBool _isLoading = false.obs;
   final RxString _errorMessage = ''.obs;
   final RxBool _isFavorite = false.obs;
-  bool _busy = false;
 
   Recipe? get recipe => _recipe.value;
   bool get isLoading => _isLoading.value;
@@ -22,53 +23,74 @@ class RecipeDetailViewmodel extends GetxController {
     try {
       _isLoading.value = true;
       _errorMessage.value = '';
-
-      final loadedRecipe = await _repository.getRecipeById(id);
-      if (loadedRecipe == null) {
-        _errorMessage.value = 'Receita não encontrada';
-      } else {
-        _recipe.value = loadedRecipe;
-      }
+      _recipe.value = await _repository.getRecipeById(id);
+      var userId = '';
+      await _authRepository.currentUser.fold(
+        (left) => _errorMessage.value = left.message,
+        (right) => userId = right.id,
+      );
+      _isFavorite.value = await isRecipeFavorite(id, userId);
     } catch (e) {
       _errorMessage.value = 'Falha ao buscar receita: ${e.toString()}';
-      _recipe.value = null;
     } finally {
       _isLoading.value = false;
     }
   }
 
-  Future<void> checkIfFavorite(String userId) async {
-    if (recipe == null) return;
-
+  Future<bool> isRecipeFavorite(String recipeId, String userId) async {
     try {
+      _isLoading.value = true;
+      _errorMessage.value = '';
       final favRecipes = await _repository.getFavRecipes(userId);
-      _isFavorite.value = favRecipes.any((r) => r.id == recipe!.id);
+      return favRecipes.any((recipe) => recipe.id == recipeId);
     } catch (e) {
-      _errorMessage.value = 'Falha ao verificar favorito: ${e.toString()}';
+      _errorMessage.value = 'Falha ao buscar receita favorita: ${e.toString()}';
+    } finally {
+      _isLoading.value = false;
+    }
+    return false;
+  }
+
+  Future<void> toggleFavorite() async {
+    var userId = '';
+    await _authRepository.currentUser.fold(
+      (left) => _errorMessage.value = left.message,
+      (right) => userId = right.id,
+    );
+    final recipeId = recipe!.id;
+
+    if (_isFavorite.value) {
+      await removeFromFavorites(recipeId, userId);
+    } else {
+      await addToFavorites(recipeId, userId);
     }
   }
 
-  Future<void> toggleFavorite(String userId) async {
-    if (recipe == null || _busy) return;
-    _busy = true;
-
-    final favVm = getIt<FavRecipesViewModel>();
-    await favVm.init(userId);
-
+  Future<void> addToFavorites(String recipeId, String userId) async {
     try {
-      if (_isFavorite.value) {
-        await _repository.removeFavorite(userId, recipe!.id);
-        favVm.removeLocal(recipe!.id);
-        _isFavorite.value = false;
-      } else {
-        await _repository.addFavorite(userId, recipe!.id);
-        favVm.addLocal(recipe!);
-        _isFavorite.value = true;
-      }
+      _isLoading.value = true;
+      _errorMessage.value = '';
+      await _repository.addFavorite(recipeId, userId);
+      _isFavorite.value = true;
     } catch (e) {
-      _errorMessage.value = e.toString();
+      _errorMessage.value =
+          'Falha ao adicionar receita favorita: ${e.toString()}';
     } finally {
-      _busy = false;
+      _isLoading.value = false;
+    }
+  }
+
+  Future<void> removeFromFavorites(String recipeId, String userId) async {
+    try {
+      _isLoading.value = true;
+      _errorMessage.value = '';
+      await _repository.removeFavorite(recipeId, userId);
+      _isFavorite.value = false;
+    } catch (e) {
+      _errorMessage.value =
+          'Falha ao remover receita favorita: ${e.toString()}';
+    } finally {
+      _isLoading.value = false;
     }
   }
 }

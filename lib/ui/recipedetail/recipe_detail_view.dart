@@ -6,10 +6,9 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:go_router/go_router.dart';
 
 class RecipeDetailView extends StatefulWidget {
-  const RecipeDetailView({super.key, required this.id, required this.userId});
+  const RecipeDetailView({super.key, required this.id});
 
   final String id;
-  final String userId;
 
   @override
   State<RecipeDetailView> createState() => _RecipeDetailViewState();
@@ -21,9 +20,8 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await viewModel.loadRecipe(widget.id);
-      await viewModel.checkIfFavorite(widget.userId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.loadRecipe(widget.id);
     });
   }
 
@@ -166,8 +164,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton(
-                          onPressed: () =>
-                              viewModel.toggleFavorite(widget.userId),
+                          onPressed: () => viewModel.toggleFavorite(),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: viewModel.isFavorite
                                 ? Theme.of(context).colorScheme.onTertiary

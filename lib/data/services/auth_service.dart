@@ -9,6 +9,10 @@ class AuthService {
   // Retorna o usuário atual
   User? get currentUser => _supabaseClient.auth.currentUser;
 
+  //stream pra ouvir mudanças
+  Stream<AuthState> get authStateChanges =>
+      _supabaseClient.auth.onAuthStateChange;
+
   // Sign in com email e password
   Future<Either<AppError, AuthResponse>> signInWithPassword({
     required String email,
@@ -42,59 +46,58 @@ class AuthService {
     required String avatarUrl,
   }) async {
     try {
-      final response = await _supabaseClient.auth.signUp(
-        email: email,
-        password: password,
-      );
+      // Verificar se o username está disponível
+      final existingUsername = await _supabaseClient
+          .from('profiles')
+          .select()
+          .eq('username', username)
+          .maybeSingle();
 
-      if (response.user != null) {
-        final profileResult = await _createUserProfile(
-          userId: response.user!.id,
-          username: username,
-          avatarUrl: avatarUrl,
-        );
-
-        return profileResult.fold(
-          (left) => Left(left),
-          (right) => Right(response),
-        );
+      if (existingUsername != null) {
+        return Left(AppError('Username não disponível'));
       }
 
-      return Right(response);
-    } on AuthException catch (e) {
-      switch (e.message) {
-        case 'User already registered':
-          return Left(AppError('Este e-mail já está cadastrado'));
-        case 'Password should be at least 6 characters':
-          return Left(AppError('A senha deve ter pelo menos 6 caracteres'));
-        case 'Signup requires a valid password':
-          return Left(AppError('Senha inválida'));
-        case 'Invalid email format':
-          return Left(AppError('Formato de e-mail inválido'));
+      final result = await insertUser(email: email, password: password);
+      return result.fold((left) => Left(left), (right) async {
+        await _supabaseClient.from('profiles').insert({
+          'id': result.right.user!.id,
+          'username': username,
+          'avatarUrl': avatarUrl,
+        });
+        return Right(right);
+      });
+    } on PostgrestException catch (e) {
+      switch (e.code) {
+        case '23505':
+          return Left(AppError('E-mail já registrado'));
         default:
-          return Left(AppError('Erro ao criar conta: ${e.message}', e));
+          return Left(AppError('Erro ao registrar usuário', e));
       }
     } catch (e) {
-      return Left(AppError('Erro inesperado ao criar conta'));
+      return Left(AppError('Erro inesperado ao registrar usuário', e));
     }
   }
 
   // Criar profile do usuário na tabela profiles
-  Future<Either<AppError, void>> _createUserProfile({
-    required String userId,
-    required String username,
-    required String avatarUrl,
+  Future<Either<AppError, AuthResponse>> insertUser({
+    required String email,
+    required String password,
   }) async {
     try {
-      await _supabaseClient.from('profiles').insert({
-        'id': userId,
-        'username': username,
-        'avatarUrl': avatarUrl,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-      return const Right(null);
-    } catch (e) {
-      return Left(AppError('Erro ao criar perfil do usuário'));
+      final response = await _supabaseClient.auth.signUp(
+        email: email,
+        password: password,
+      );
+      return Right(response);
+    } on AuthException catch (e) {
+      switch (e.message) {
+        case 'Email not confirmed':
+          return Left(
+            AppError('E-mail não confirmado. Verifique sua caixa de entrada'),
+          );
+        default:
+          return Left(AppError('Erro ao fazer cadastro', e));
+      }
     }
   }
 
@@ -115,12 +118,15 @@ class AuthService {
   }
 
   // Logout
+
   Future<Either<AppError, void>> signOut() async {
     try {
       await _supabaseClient.auth.signOut();
-      return const Right(null);
+      return Right(null);
+    } on AuthException catch (e) {
+      return Left(AppError('Erro ao sair', e));
     } catch (e) {
-      return Left(AppError('Erro ao fazer logout'));
+      return Left(AppError('Erro inesperado ao sair', e));
     }
   }
 }

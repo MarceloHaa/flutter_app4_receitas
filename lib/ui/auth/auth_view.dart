@@ -41,6 +41,8 @@ class _AuthViewState extends State<AuthView> {
                       _buildAvatarUrlField(),
                     ],
                     const SizedBox(height: 32),
+                    _buildErrorMessage(),
+                    const SizedBox(height: 32),
                     _buildSubmitButton(),
                     const SizedBox(height: 32),
                     _buildToggleModeButton(),
@@ -167,6 +169,22 @@ class _AuthViewState extends State<AuthView> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       validator: viewModel.validateAvatarUrl,
+    );
+  }
+
+  Widget _buildErrorMessage() {
+    return Obx(
+      () => Visibility(
+        visible: viewModel.errorMessage.isNotEmpty,
+        child: Text(
+          viewModel.errorMessage,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.error,
+            fontSize: 16,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 

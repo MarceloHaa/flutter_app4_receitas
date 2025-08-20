@@ -38,7 +38,6 @@ class AuthService {
     }
   }
 
-  // Sign Up
   Future<Either<AppError, AuthResponse>> signUp({
     required String email,
     required String password,
@@ -62,7 +61,7 @@ class AuthService {
         await _supabaseClient.from('profiles').insert({
           'id': result.right.user!.id,
           'username': username,
-          'avatarUrl': avatarUrl,
+          'avatar_url': avatarUrl,
         });
         return Right(right);
       });

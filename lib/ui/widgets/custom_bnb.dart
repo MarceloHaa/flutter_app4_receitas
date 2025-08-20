@@ -40,6 +40,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      selectedItemColor: Theme.of(context).colorScheme.error,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.restaurant_menu),

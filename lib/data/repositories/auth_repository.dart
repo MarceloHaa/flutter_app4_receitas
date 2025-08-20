@@ -10,17 +10,11 @@ class AuthRepository extends GetxController {
 
   Future<Either<AppError, UserProfile>> get currentUser async {
     final user = _service.currentUser;
-    if (user == null) {
-      return Left(AppError('Usuário não logado'));
-    }
-
-    final profile = await _service.fetchUserProfile(user.id);
-    return profile.fold((left) => Left(left), (right) {
-      if (right == null) {
-        return Left(AppError('Perfil do usuário não encontrado'));
-      }
-      return Right(UserProfile.fromSupabase(user.toJson(), right));
-    });
+    final profile = await _service.fetchUserProfile(user!.id);
+    return profile.fold(
+      (left) => Left(left),
+      (right) => Right(UserProfile.fromSupabase(user.toJson(), right!)),
+    );
   }
 
   Future<Either<AppError, UserProfile>> signInWithPassword({
@@ -34,12 +28,10 @@ class AuthRepository extends GetxController {
     return result.fold((left) => Left(left), (right) async {
       final user = right.user!;
       final profileResult = await _service.fetchUserProfile(user.id);
-      return profileResult.fold((left) => Left(left), (right) {
-        if (right == null) {
-          return Left(AppError('Perfil do usuário não encontrado'));
-        }
-        return Right(UserProfile.fromSupabase(user.toJson(), right));
-      });
+      return profileResult.fold(
+        (left) => Left(left),
+        (right) => Right(UserProfile.fromSupabase(user.toJson(), right!)),
+      );
     });
   }
 
@@ -55,16 +47,13 @@ class AuthRepository extends GetxController {
       username: username,
       avatarUrl: avatarUrl,
     );
-
     return result.fold((left) => Left(left), (right) async {
       final user = right.user!;
       final profileResult = await _service.fetchUserProfile(user.id);
-      return profileResult.fold((left) => Left(left), (right) {
-        if (right == null) {
-          return Left(AppError('Perfil do usuário não encontrado'));
-        }
-        return Right(UserProfile.fromSupabase(user.toJson(), right));
-      });
+      return profileResult.fold(
+        (left) => Left(left),
+        (right) => Right(UserProfile.fromSupabase(user.toJson(), right!)),
+      );
     });
   }
 

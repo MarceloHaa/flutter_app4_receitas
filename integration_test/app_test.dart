@@ -19,7 +19,6 @@ void main() {
       await tester.enterText(emailField, 'marcelohenrique.a@hotmail.com');
       await tester.enterText(passwordField, '123456#');
       await tester.pump();
-
       await tester.ensureVisible(submitButton);
       await tester.tap(submitButton);
       await tester.pumpAndSettle();

@@ -24,6 +24,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView>
 
   @override
   void initState() {
+    super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -36,7 +37,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView>
               _animationController.reverse();
             }
           });
-    super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.loadRecipe(widget.id);
     });

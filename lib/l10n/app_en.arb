@@ -1,0 +1,22 @@
+{
+  "@@locale": "en",
+  "appTitle": "I Love Cooking",
+  "signInSubtitle": "Sign in to your account",
+  "signUpSubtitle": "Create a new account",
+  "emailLabel": "Email",
+  "emailHint": "Enter your email",
+  "passwordLabel": "Password",
+  "passwordHint": "Enter your password",
+  "confirmPasswordLabel": "Confirm Password",
+  "confirmPasswordHint": "Enter your password again",
+  "usernameLabel": "Username",
+  "usernameHint": "Enter your username",
+  "avatarUrlLabel": "Avatar URL",
+  "avatarUrlHint": "Enter your avatar URL",
+  "signInButton": "SIGN IN",
+  "signUpButton": "SIGN UP",
+  "noAccountQuestion": "Don't have an account? ",
+  "hasAccountQuestion": "Already have an account? ",
+  "signUpLink": "Sign up",
+  "signInLink": "Sign in here"
+}

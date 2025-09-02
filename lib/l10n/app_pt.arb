@@ -1,0 +1,22 @@
+{
+  "@@locale": "pt",
+  "appTitle": "Eu Amo Cozinhar",
+  "signInSubtitle": "Entre na sua conta",
+  "signUpSubtitle": "Crie uma nova conta",
+  "emailLabel": "E-mail",
+  "emailHint": "Digite seu e-mail",
+  "passwordLabel": "Senha",
+  "passwordHint": "Digite sua senha",
+  "confirmPasswordLabel": "Confirmar senha",
+  "confirmPasswordHint": "Digite novamente sua senha",
+  "usernameLabel": "Usuário",
+  "usernameHint": "Digite seu nome de usuário",
+  "avatarUrlLabel": "URL do Avatar",
+  "avatarUrlHint": "Digite a URL do seu avatar",
+  "signInButton": "ENTRAR",
+  "signUpButton": "CADASTRAR",
+  "noAccountQuestion": "Não tem uma conta? ",
+  "hasAccountQuestion": "Já tem uma conta? ",
+  "signUpLink": "Cadastre-se",
+  "signInLink": "Entre aqui"
+}
